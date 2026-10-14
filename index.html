@@ -41,14 +41,25 @@
 </header>
 <main>
   <div class="wrap" id="viewer">
-    <div class="page"><img src="pages/p-01.jpg" width="1240" height="1755" loading="eager" alt="1쪽"><span class="pno">1 / 68</sp<script>
-(function () {
-  var viewer = document.getElementById('viewer'), w = 100;
-  function z(d) { w = Math.max(60, Math.min(200, w + d)); viewer.style.maxWidth = (920 * w / 100) + 'px'; }
-  document.getElementById('zin').onclick = function () { z(20); };
-  document.getElementById('zout').onclick = function () { z(-20); };
-})();
-</script>div class="page"><img src="pages/p-19.jpg" width="1240" height="1755" loading="lazy" alt="19쪽"><span class="pno">19 / 68</span></div>
+    <div class="page"><img src="pages/p-01.jpg" width="1240" height="1755" loading="eager" alt="1쪽"><span class="pno">1 / 68</span></div>
+    <div class="page"><img src="pages/p-02.jpg" width="1240" height="1755" loading="eager" alt="2쪽"><span class="pno">2 / 68</span></div>
+    <div class="page"><img src="pages/p-03.jpg" width="1240" height="1755" loading="lazy" alt="3쪽"><span class="pno">3 / 68</span></div>
+    <div class="page"><img src="pages/p-04.jpg" width="1240" height="1755" loading="lazy" alt="4쪽"><span class="pno">4 / 68</span></div>
+    <div class="page"><img src="pages/p-05.jpg" width="1240" height="1755" loading="lazy" alt="5쪽"><span class="pno">5 / 68</span></div>
+    <div class="page"><img src="pages/p-06.jpg" width="1240" height="1755" loading="lazy" alt="6쪽"><span class="pno">6 / 68</span></div>
+    <div class="page"><img src="pages/p-07.jpg" width="1240" height="1755" loading="lazy" alt="7쪽"><span class="pno">7 / 68</span></div>
+    <div class="page"><img src="pages/p-08.jpg" width="1240" height="1755" loading="lazy" alt="8쪽"><span class="pno">8 / 68</span></div>
+    <div class="page"><img src="pages/p-09.jpg" width="1240" height="1755" loading="lazy" alt="9쪽"><span class="pno">9 / 68</span></div>
+    <div class="page"><img src="pages/p-10.jpg" width="1240" height="1755" loading="lazy" alt="10쪽"><span class="pno">10 / 68</span></div>
+    <div class="page"><img src="pages/p-11.jpg" width="1240" height="1755" loading="lazy" alt="11쪽"><span class="pno">11 / 68</span></div>
+    <div class="page"><img src="pages/p-12.jpg" width="1240" height="1755" loading="lazy" alt="12쪽"><span class="pno">12 / 68</span></div>
+    <div class="page"><img src="pages/p-13.jpg" width="1240" height="1755" loading="lazy" alt="13쪽"><span class="pno">13 / 68</span></div>
+    <div class="page"><img src="pages/p-14.jpg" width="1240" height="1755" loading="lazy" alt="14쪽"><span class="pno">14 / 68</span></div>
+    <div class="page"><img src="pages/p-15.jpg" width="1240" height="1755" loading="lazy" alt="15쪽"><span class="pno">15 / 68</span></div>
+    <div class="page"><img src="pages/p-16.jpg" width="1240" height="1755" loading="lazy" alt="16쪽"><span class="pno">16 / 68</span></div>
+    <div class="page"><img src="pages/p-17.jpg" width="1240" height="1755" loading="lazy" alt="17쪽"><span class="pno">17 / 68</span></div>
+    <div class="page"><img src="pages/p-18.jpg" width="1240" height="1755" loading="lazy" alt="18쪽"><span class="pno">18 / 68</span></div>
+    <div class="page"><img src="pages/p-19.jpg" width="1240" height="1755" loading="lazy" alt="19쪽"><span class="pno">19 / 68</span></div>
     <div class="page"><img src="pages/p-20.jpg" width="1240" height="1755" loading="lazy" alt="20쪽"><span class="pno">20 / 68</span></div>
     <div class="page"><img src="pages/p-21.jpg" width="1240" height="1755" loading="lazy" alt="21쪽"><span class="pno">21 / 68</span></div>
     <div class="page"><img src="pages/p-22.jpg" width="1240" height="1755" loading="lazy" alt="22쪽"><span class="pno">22 / 68</span></div>
@@ -102,58 +113,12 @@
 </main>
 <footer>주최 한국응용생명화학회 천연물분과 · 68쪽 · 화면이 보이지 않으면 위 ‘PDF 다운로드’를 눌러 주세요.</footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 (function () {
-  var viewer = document.getElementById('viewer');
-  var status = document.getElementById('status');
-  var widthPct = 100;
-  if (!window.pdfjsLib) { status.textContent = '뷰어를 불러오지 못했습니다. 위의 ‘PDF 다운로드’ 또는 ‘새 창에서 PDF 열기’를 이용해 주세요.'; return; }
-  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-  pdfjsLib.getDocument('abstracts.pdf').promise.then(function (pdf) {
-    status.remove();
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting && !e.target.dataset.done) { e.target.dataset.done = '1'; render(pdf, e.target); }
-      });
-    }, { rootMargin: '1200px 0px' });
-    var first;
-    for (var i = 1; i <= pdf.numPages; i++) {
-      var box = document.createElement('div');
-      box.className = 'page'; box.dataset.n = i;
-      box.style.aspectRatio = '210 / 297';
-      box.innerHTML = '<span class="pno">' + i + ' / ' + pdf.numPages + '</span>';
-      viewer.appendChild(box); io.observe(box);
-    }
-    pdf.getPage(1).then(function (p) {
-      var v = p.getViewport({ scale: 1 });
-      document.querySelectorAll('.page').forEach(function (b) { b.style.aspectRatio = v.width + ' / ' + v.height; });
-    });
-  }).catch(function () {
-    status.textContent = '초록집을 화면에 표시하지 못했습니다. 위의 ‘PDF 다운로드’를 이용해 주세요.';
-  });
-
-  function render(pdf, box) {
-    pdf.getPage(+box.dataset.n).then(function (page) {
-      var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-      var base = page.getViewport({ scale: 1 });
-      var scale = (box.clientWidth * dpr) / base.width;
-      var vp = page.getViewport({ scale: scale });
-      var c = document.createElement('canvas');
-      c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
-      box.insertBefore(c, box.firstChild);
-      box.style.aspectRatio = '';
-      page.render({ canvasContext: c.getContext('2d'), viewport: vp });
-    });
-  }
-
-  function setZoom(d) {
-    widthPct = Math.max(60, Math.min(200, widthPct + d));
-    viewer.style.maxWidth = (920 * widthPct / 100) + 'px';
-  }
-  document.getElementById('zin').onclick = function () { setZoom(20); };
-  document.getElementById('zout').onclick = function () { setZoom(-20); };
+  var viewer = document.getElementById('viewer'), w = 100;
+  function z(d) { w = Math.max(60, Math.min(200, w + d)); viewer.style.maxWidth = (920 * w / 100) + 'px'; }
+  document.getElementById('zin').onclick = function () { z(20); };
+  document.getElementById('zout').onclick = function () { z(-20); };
 })();
 </script>
 </body>
