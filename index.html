@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>2026 천연물분과 심포지엄 초록집</title>
+<style>
+  :root { --bg:#f3f6f1; --card:#fff; --ink:#1f2b1f; --muted:#5d6b5d; --green:#2f6b3a; --green2:#e3eee2; --line:#d5dfd3; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif; }
+  header { background:var(--green); color:#fff; padding:18px 16px 16px; position:sticky; top:0; z-index:5; box-shadow:0 2px 6px rgba(0,0,0,.15); }
+  .wrap { max-width:920px; margin:0 auto; }
+  h1 { font-size:1.15rem; margin:0 0 4px; line-height:1.35; }
+  .sub { font-size:.85rem; opacity:.9; margin:0 0 12px; }
+  .btns { display:flex; gap:8px; flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:9px 14px; border-radius:8px; font-size:.92rem; font-weight:600; text-decoration:none; border:0; cursor:pointer; }
+  .btn.dl { background:#fff; color:var(--green); }
+  .btn.alt { background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.5); }
+  .btn.zoom { background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.5); padding:9px 12px; }
+  main { padding:16px; }
+  #status { text-align:center; color:var(--muted); font-size:.9rem; padding:24px 0; }
+  .page { background:var(--card); margin:0 auto 14px; box-shadow:0 1px 4px rgba(0,0,0,.12); border-radius:4px; overflow:hidden; position:relative; }
+  .page canvas { display:block; width:100%; height:auto; }
+  .pno { position:absolute; right:8px; bottom:6px; font-size:.72rem; color:var(--muted); background:rgba(255,255,255,.85); padding:1px 6px; border-radius:6px; }
+  footer { text-align:center; color:var(--muted); font-size:.8rem; padding:8px 16px 32px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>2026 한국응용생명화학회 천연물분과 심포지엄 초록집</h1>
+    <p class="sub">천연물 연구성과의 산업화 전략 · 2026. 10. 15.(목)–16.(금) · 한국생명공학연구원 오창분원 국제회의동</p>
+    <div class="btns">
+      <a class="btn dl" href="abstracts.pdf" download="2026_천연물분과_심포지엄_초록집.pdf">PDF 다운로드</a>
+      <a class="btn alt" href="abstracts.pdf" target="_blank" rel="noopener">새 창에서 PDF 열기</a>
+      <button class="btn zoom" id="zout" aria-label="축소">－</button>
+      <button class="btn zoom" id="zin" aria-label="확대">＋</button>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap" id="viewer"><div id="status">초록집을 불러오는 중…</div></div>
+</main>
+<footer>주최 한국응용생명화학회 천연물분과 · 68쪽 · 화면이 보이지 않으면 위 ‘PDF 다운로드’를 눌러 주세요.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+(function () {
+  var viewer = document.getElementById('viewer');
+  var status = document.getElementById('status');
+  var widthPct = 100;
+  if (!window.pdfjsLib) { status.textContent = '뷰어를 불러오지 못했습니다. 위의 ‘PDF 다운로드’ 또는 ‘새 창에서 PDF 열기’를 이용해 주세요.'; return; }
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  pdfjsLib.getDocument('abstracts.pdf').promise.then(function (pdf) {
+    status.remove();
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting && !e.target.dataset.done) { e.target.dataset.done = '1'; render(pdf, e.target); }
+      });
+    }, { rootMargin: '1200px 0px' });
+    var first;
+    for (var i = 1; i <= pdf.numPages; i++) {
+      var box = document.createElement('div');
+      box.className = 'page'; box.dataset.n = i;
+      box.style.aspectRatio = '210 / 297';
+      box.innerHTML = '<span class="pno">' + i + ' / ' + pdf.numPages + '</span>';
+      viewer.appendChild(box); io.observe(box);
+    }
+    pdf.getPage(1).then(function (p) {
+      var v = p.getViewport({ scale: 1 });
+      document.querySelectorAll('.page').forEach(function (b) { b.style.aspectRatio = v.width + ' / ' + v.height; });
+    });
+  }).catch(function () {
+    status.textContent = '초록집을 화면에 표시하지 못했습니다. 위의 ‘PDF 다운로드’를 이용해 주세요.';
+  });
+
+  function render(pdf, box) {
+    pdf.getPage(+box.dataset.n).then(function (page) {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+      var base = page.getViewport({ scale: 1 });
+      var scale = (box.clientWidth * dpr) / base.width;
+      var vp = page.getViewport({ scale: scale });
+      var c = document.createElement('canvas');
+      c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+      box.insertBefore(c, box.firstChild);
+      box.style.aspectRatio = '';
+      page.render({ canvasContext: c.getContext('2d'), viewport: vp });
+    });
+  }
+
+  function setZoom(d) {
+    widthPct = Math.max(60, Math.min(200, widthPct + d));
+    viewer.style.maxWidth = (920 * widthPct / 100) + 'px';
+  }
+  document.getElementById('zin').onclick = function () { setZoom(20); };
+  document.getElementById('zout').onclick = function () { setZoom(-20); };
+})();
+</script>
+</body>
+</html>
